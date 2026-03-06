@@ -72,7 +72,7 @@ int main() {
 
     for(int i=0; i < size; i++) {
         Spring* spring = new Spring();
-        spring->k = 20;
+        spring->k = 250;
         spring->l0 = 0;
         spring->init(objects[i], objects[i+1]);
         objects.push_back(spring);
@@ -102,14 +102,15 @@ int main() {
             }
         }
         if(!pause) {
+            for(Object* obj : objects) obj->update(objects, walls);
+
             float x, y;
             SDL_GetMouseState(&x, &y);
             start->comp.pos.x = 0;
             start->comp.vel.x = 0;
             //start->comp.pos.y = window_height / 2 + 100 * sin(5 * time);
-            end->comp.pos.y = window_height / 2 - 100 * sin(5 * time);
-
-            for(Object* obj : objects) obj->update(objects, walls);
+            //end->comp.pos.x = window_width - 100 + 10 * sin(3 * time);
+            end->comp.pos.y = window_height / 2 - 100 * sin(3.2 * time);
         }
 
         //Drawing things

@@ -15,7 +15,7 @@ class Object {
             .vel = {0, 0},
             .acc = {0, 0},
             .radius = 10,
-            .mass = 20,
+            .mass = 500,
         };
 
         virtual ~Object() {}

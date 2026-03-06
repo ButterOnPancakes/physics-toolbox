@@ -17,13 +17,13 @@ void SDL_RenderBackground(SDL_Renderer *renderer, SDL_Color color) {
 
 void SDL_RenderRectangle(SDL_Renderer *renderer, double x, double y, double width, double height, SDL_Color color) {
     set_draw_color(renderer, color);
-    SDL_FRect rect = {x, y, width, height};
+    SDL_FRect rect = {(float)x, (float)y, (float)width, (float)height};
     SDL_RenderRect(renderer, &rect);
     reset_draw_color(renderer);
 }
 void SDL_RenderFilledRectangle(SDL_Renderer *renderer, double x, double y, double width, double height, SDL_Color color) {
     set_draw_color(renderer, color);
-    SDL_FRect rect = {x, y, width, height};
+    SDL_FRect rect = {(float)x, (float)y, (float)width, (float)height};
     SDL_RenderFillRect(renderer, &rect);
     reset_draw_color(renderer);
 }

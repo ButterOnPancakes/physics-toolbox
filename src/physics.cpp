@@ -16,7 +16,6 @@ void collide_wall(PhysicsComponent *comp, PhysicsComponent *newcomp, Wall wall) 
         newcomp->pos = comp->pos; //Annule le mvmt
         
         newcomp->vel = vector_flip(newcomp->vel, wall.norm);
-        
         //printf("Collisions : %f\n", reaction.get_norm());
     }
 }
