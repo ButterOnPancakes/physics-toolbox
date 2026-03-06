@@ -19,6 +19,6 @@ typedef struct {
     Vector2D norm;
 } Wall;
 
-void update_pfd(PhysicsComponent *comp, std::vector<Wall> walls);
+PhysicsComponent update_pfd(PhysicsComponent comp, std::vector<Wall> walls, double DT);
 
 #endif

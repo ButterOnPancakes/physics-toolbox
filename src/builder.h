@@ -15,19 +15,20 @@ class Object {
             .vel = {0, 0},
             .acc = {0, 0},
             .radius = 10,
-            .mass = 500,
+            .mass = 0.1,
         };
 
         virtual ~Object() {}
 
-        virtual void update(std::vector<Object *> objects, std::vector<Wall> walls);
+        virtual void apply_forces(std::vector<Object *> objects);
+        void update(std::vector<Object *> objects, std::vector<Wall> walls, double DT);
         virtual void draw(SDL_Renderer *renderer);
 };
 
 class FixedObject : public Object {
     public:
         
-        void update(std::vector<Object *> objects, std::vector<Wall> walls) override;
+        void apply_forces(std::vector<Object *> objects) override;
         void draw(SDL_Renderer *renderer) override;
 };
 
@@ -39,7 +40,7 @@ class Spring : public Object {
         double k;
 
         void init(Object *obj1, Object *obj2);
-        void update(std::vector<Object *> objects, std::vector<Wall> walls) override;
+        void apply_forces(std::vector<Object *> objects) override;
         void draw(SDL_Renderer *renderer) override;
 };
 
@@ -47,7 +48,7 @@ class Particle : public Object {
     public:
         double charge;
         
-        void update(std::vector<Object *> objects, std::vector<Wall> walls) override;
+        void apply_forces(std::vector<Object *> objects) override;
         void draw(SDL_Renderer *renderer) override;
 };
 

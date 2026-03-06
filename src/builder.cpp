@@ -3,16 +3,22 @@
 #include <stdio.h>
 #include "utils.h"
 
-void Object::update(std::vector<Object *> objects, std::vector<Wall> walls) {
+void Object::apply_forces(std::vector<Object *> /*objects*/) {
     comp.acc = vector_sum(comp.acc, {0, g});
-    update_pfd(&comp, walls);
-    comp.acc = {0, 0};
+}
+void Object::update(std::vector<Object *> objects, std::vector<Wall> walls, double DT) {
+    apply_forces(objects);
+    comp = update_pfd(comp, walls, DT);
+    comp.acc = {0, 0}; // L'acceleration est compute chaque frame
 }
 void Object::draw(SDL_Renderer *renderer) {
     SDL_RenderCircle(renderer, comp.pos.x, comp.pos.y, comp.radius, comp.radius / 5, SDL_WHITE);
 }
 
-void FixedObject::update(std::vector<Object *> objects, std::vector<Wall> walls) {}
+void FixedObject::apply_forces(std::vector<Object *> /*objects*/) {
+    comp.acc = {0, 0};
+    comp.vel = {0, 0};
+}
 void FixedObject::draw(SDL_Renderer *renderer) {
     SDL_RenderFilledCircle(renderer, comp.pos.x, comp.pos.y, 10, SDL_BLUE);
 }
@@ -21,7 +27,7 @@ void Spring::init(Object *obj1, Object *obj2) {
     this->obj1 = obj1;
     this->obj2 = obj2;
 }
-void Spring::update(std::vector<Object *> objects, std::vector<Wall> walls) {
+void Spring::apply_forces(std::vector<Object *> /*objects*/) {
     if(obj1 == NULL || obj2 == NULL) return;
     Vector2D dist = vector_sub(obj2->comp.pos, obj1->comp.pos);
     double length = dist.get_norm();
@@ -40,7 +46,7 @@ void Spring::draw(SDL_Renderer *renderer) {
     SDL_RenderVector(renderer, dist, obj2->comp.pos.x, obj2->comp.pos.y, SDL_WHITE);
 }
 
-void Particle::update(std::vector<Object *> objects, std::vector<Wall> walls) {
+void Particle::apply_forces(std::vector<Object *> objects) {
     for(Object *obj : objects) {
         if(obj == this) continue;
         Particle* part = dynamic_cast<Particle*>(obj);
@@ -51,11 +57,11 @@ void Particle::update(std::vector<Object *> objects, std::vector<Wall> walls) {
             if(dist.get_norm() < 1e-1) continue;
             
             float coef = part->charge * this->charge / (comp.mass * 4 * M_PI * EPSILON_0 * dist.get_norm() * dist.get_norm());
-            Vector2D elec_acc = vector_scalar(dist, coef);
+            Vector2D elec_acc = vector_scalar(uni, coef);
             comp.acc = vector_sum(comp.acc, elec_acc);
         }
     }
-    Object::update(objects, walls);
+    Object::apply_forces(objects);
 }
 void Particle::draw(SDL_Renderer *renderer) {
     SDL_RenderCircle(renderer, comp.pos.x, comp.pos.y, comp.radius, comp.radius / 5, charge > 0 ? SDL_YELLOW : SDL_RED);
