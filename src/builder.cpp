@@ -12,25 +12,32 @@ void Object::draw(SDL_Renderer *renderer) {
     SDL_RenderCircle(renderer, comp.pos.x, comp.pos.y, comp.radius, comp.radius / 5, SDL_WHITE);
 }
 
-void Spring::init(Object *obj) {
-    moving = obj;
+void FixedObject::update(std::vector<Object *> objects, std::vector<Wall> walls) {}
+void FixedObject::draw(SDL_Renderer *renderer) {
+    SDL_RenderFilledCircle(renderer, comp.pos.x, comp.pos.y, 10, SDL_BLUE);
+}
+
+void Spring::init(Object *obj1, Object *obj2) {
+    this->obj1 = obj1;
+    this->obj2 = obj2;
 }
 void Spring::update(std::vector<Object *> objects, std::vector<Wall> walls) {
-    if(moving == NULL) return;
-    Vector2D dist = vector_sub(comp.pos, moving->comp.pos);
+    if(obj1 == NULL || obj2 == NULL) return;
+    Vector2D dist = vector_sub(obj2->comp.pos, obj1->comp.pos);
     double length = dist.get_norm();
     if (length > 1e-3) {
         Vector2D dir = vector_normalise(dist);
         double displacement = length - l0;
         Vector2D spring_force = vector_scalar(dir, k * displacement);
-        moving->comp.acc = vector_sum(moving->comp.acc, vector_scalar(spring_force, 1.0 / moving->comp.mass));
+
+        obj1->comp.acc = vector_sum(obj1->comp.acc, vector_scalar(spring_force, 1.0 / obj1->comp.mass));
+        obj2->comp.acc = vector_sum(obj2->comp.acc, vector_scalar(spring_force, - 1.0 / obj2->comp.mass));
     }
 }
 void Spring::draw(SDL_Renderer *renderer) {
-    SDL_RenderFilledCircle(renderer, comp.pos.x, comp.pos.y, 10, SDL_BLUE);
-    if(moving == NULL) return;
-    Vector2D dist = vector_sub(moving->comp.pos, comp.pos);
-    SDL_RenderVector(renderer, dist, comp.pos.x, comp.pos.y, SDL_WHITE);
+    if(obj1 == NULL || obj2 == NULL) return;
+    Vector2D dist = vector_sub(obj1->comp.pos, obj2->comp.pos);
+    SDL_RenderVector(renderer, dist, obj2->comp.pos.x, obj2->comp.pos.y, SDL_WHITE);
 }
 
 void Particle::update(std::vector<Object *> objects, std::vector<Wall> walls) {

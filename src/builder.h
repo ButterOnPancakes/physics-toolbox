@@ -14,8 +14,8 @@ class Object {
             .pos = {},
             .vel = {0, 0},
             .acc = {0, 0},
-            .radius = 20,
-            .mass = 100,
+            .radius = 10,
+            .mass = 20,
         };
 
         virtual ~Object() {}
@@ -24,13 +24,21 @@ class Object {
         virtual void draw(SDL_Renderer *renderer);
 };
 
+class FixedObject : public Object {
+    public:
+        
+        void update(std::vector<Object *> objects, std::vector<Wall> walls) override;
+        void draw(SDL_Renderer *renderer) override;
+};
+
 class Spring : public Object {
     public:
-        Object* moving;
+        Object* obj1;
+        Object* obj2;
         double l0;
         double k;
 
-        void init(Object *obj);
+        void init(Object *obj1, Object *obj2);
         void update(std::vector<Object *> objects, std::vector<Wall> walls) override;
         void draw(SDL_Renderer *renderer) override;
 };

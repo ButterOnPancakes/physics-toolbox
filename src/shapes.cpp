@@ -15,6 +15,19 @@ void SDL_RenderBackground(SDL_Renderer *renderer, SDL_Color color) {
     reset_draw_color(renderer);
 }
 
+void SDL_RenderRectangle(SDL_Renderer *renderer, double x, double y, double width, double height, SDL_Color color) {
+    set_draw_color(renderer, color);
+    SDL_FRect rect = {x, y, width, height};
+    SDL_RenderRect(renderer, &rect);
+    reset_draw_color(renderer);
+}
+void SDL_RenderFilledRectangle(SDL_Renderer *renderer, double x, double y, double width, double height, SDL_Color color) {
+    set_draw_color(renderer, color);
+    SDL_FRect rect = {x, y, width, height};
+    SDL_RenderFillRect(renderer, &rect);
+    reset_draw_color(renderer);
+}
+
 void SDL_RenderCircle(SDL_Renderer *renderer, double x, double y, double radius, double thickness, SDL_Color color) {
     set_draw_color(renderer, color);
     double minDist = (radius - thickness) * (radius - thickness);

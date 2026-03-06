@@ -17,6 +17,9 @@
 
 void SDL_RenderBackground(SDL_Renderer *renderer, SDL_Color color);
 
+void SDL_RenderRectangle(SDL_Renderer *renderer, double x, double y, double width, double height, SDL_Color color);
+void SDL_RenderFilledRectangle(SDL_Renderer *renderer, double x, double y, double width, double height, SDL_Color color);
+
 void SDL_RenderCircle(SDL_Renderer *renderer, double x, double y, double radius, double thickness, SDL_Color color);
 void SDL_RenderFilledCircle(SDL_Renderer *renderer, int x, int y, int radius, SDL_Color color);
 

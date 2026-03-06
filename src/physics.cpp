@@ -8,6 +8,8 @@
 int max_width = 1280;
 int max_height = 720;
 
+double MAX_VEL = 200;
+
 void collide_wall(PhysicsComponent *comp, PhysicsComponent *newcomp, Wall wall) {
     double dot = vector_dot(wall.norm, comp->vel);
     if(dot < 0) {
@@ -23,6 +25,9 @@ void update_pfd(PhysicsComponent *comp, std::vector<Wall> walls) {
     //printf("Position / Velocity / Accel 2 : %f / %f / %f\n", comp->pos.y, comp->vel.get_norm(), comp->acc.get_norm());
     
     Vector2D new_vel = vector_sum(comp->vel, comp->acc);
+    if(new_vel.get_norm() > MAX_VEL) {
+        new_vel = vector_scalar(vector_normalise(new_vel), MAX_VEL);
+    }
     PhysicsComponent newcomp = {
         .pos = vector_sum(comp->pos, new_vel),
         .vel = new_vel,

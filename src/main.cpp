@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 #include <vector>
 
 using namespace std;
@@ -35,35 +36,52 @@ int main() {
 
     vector<Object*> objects;
     vector<Wall> walls;
-    add_box(&walls, window_width / 2., window_height / 2., window_width - 50, window_height - 50);
+    //add_box(&walls, window_width / 2., window_height / 2., window_width - 50, window_height - 50);
 
-    Particle* ball = new Particle();
-    ball->comp.mass = MASS_PROTON;
-    ball->comp.pos = {(double) window_width / 2, (double) window_height / 2};
-    ball->charge = CHARGE;
-    objects.push_back(ball);
+    /*Particle* proton = new Particle();
+    proton->comp.mass = MASS_PROTON;
+    proton->comp.pos = {(double) window_width / 2, (double) window_height / 2};
+    proton->charge = CHARGE;
+    objects.push_back(proton);
 
-    Particle* ball2 = new Particle();
-    ball2->comp.mass = MASS_ELECTRON;
-    ball2->comp.pos = {(double) window_width / 2 + 100, (double) window_height / 2 + 100};
-    ball2->comp.vel = {6, -6};
-    ball2->charge = -CHARGE;
-    objects.push_back(ball2);
+    Particle* electron = new Particle();
+    electron->comp.mass = MASS_ELECTRON;
+    electron->comp.pos = {(double) window_width / 2 + 100, (double) window_height / 2 + 100};
+    electron->comp.vel = {6, -6};
+    electron->charge = -CHARGE;
+    objects.push_back(electron);*/
 
-    /*Spring* spring = new Spring();
-    spring->comp.pos = {(double) window_width / 2, (double) 40};
-    spring->k = 1;
-    spring->l0 = 0;
-    spring->init(ball);
-    objects.push_back(spring);*/
+    int space = 5;
+    int amount = (window_width) / (double) space - 1;
 
+    Object* start = new Object();
+    start->comp.pos = {0, (double) window_height / 2};
+    objects.push_back(start);
+
+    for(int i = 1; i < amount; i++) {
+        Object* obj = new Object();
+        obj->comp.radius = 5;
+        obj->comp.pos = {(double) i * space, (double) window_height / 2};
+        objects.push_back(obj);
+    }
+    int size = objects.size();
+
+    FixedObject* end = new FixedObject();
+    end->comp.pos = {(double) size * space, (double) window_height / 2};
+    objects.push_back(end);
+
+    for(int i=0; i < size; i++) {
+        Spring* spring = new Spring();
+        spring->k = 20;
+        spring->l0 = 0;
+        spring->init(objects[i], objects[i+1]);
+        objects.push_back(spring);
+    }
+
+    double time = 0;
     bool running = true;
+    bool pause = false;
     while(running) {
-        float x, y;
-        SDL_GetMouseState(&x, &y);
-        //ball2->comp.pos.x = x; ball2->comp.pos.y = y;
-        //spring->comp.pos.x = x; spring->comp.pos.y = y;
-
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -76,13 +94,27 @@ int main() {
                         running = false;
                         break;
                     }
+                    if(event.key.scancode == SDL_SCANCODE_SPACE) {
+                        pause = !pause;
+                        break;
+                    }
                 }
             }
         }
+        if(!pause) {
+            float x, y;
+            SDL_GetMouseState(&x, &y);
+            start->comp.pos.x = 0;
+            start->comp.vel.x = 0;
+            //start->comp.pos.y = window_height / 2 + 100 * sin(5 * time);
+            end->comp.pos.y = window_height / 2 - 100 * sin(5 * time);
 
-        for(Object* obj : objects) obj->update(objects, walls);
-        
+            for(Object* obj : objects) obj->update(objects, walls);
+        }
+
+        //Drawing things
         SDL_RenderBackground(renderer, SDL_BLACK);
+        SDL_RenderFilledRectangle(renderer, window_width - 100, 50, 50, 50, pause ? SDL_RED : SDL_GREEN);
         
         for(Object* obj : objects) obj->draw(renderer);
 
@@ -95,7 +127,9 @@ int main() {
         }
         
         SDL_RenderPresent(renderer);
+
         SDL_Delay(16.67);
+        if(!pause) time += 16.67 * 1e-3;
     }
 	
     for(Object* obj : objects) delete obj;
