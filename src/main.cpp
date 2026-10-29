@@ -38,7 +38,7 @@ int main() {
 
     vector<Object*> objects;
     vector<Wall> walls;
-    add_box(&walls, window_width / 2., window_height / 2., window_width - 50, window_height - 50);
+    //add_box(&walls, window_width / 2., window_height / 2., window_width - 50, window_height - 50);
 
     /*Particle* proton = new Particle();
     proton->comp.mass = MASS_PROTON;
@@ -53,7 +53,7 @@ int main() {
     electron->charge = -CHARGE;
     objects.push_back(electron);*/
 
-    /*int space = 5;
+    int space = 5;
     int amount = (window_width) / (double) space - 1;
 
     Object* start = new Object();
@@ -78,7 +78,7 @@ int main() {
         spring->l0 = 0;
         spring->init(objects[i], objects[i+1]);
         objects.push_back(spring);
-    }*/
+    }
 
     double time = 0;
     bool running = true;
@@ -108,11 +108,11 @@ int main() {
 
             float x, y;
             SDL_GetMouseState(&x, &y);
-            //start->comp.pos.x = 0;
+            start->comp.pos.x = 0;
             //start->comp.vel.x = 0;
-            //start->comp.pos.y = window_height / 2 + 100 * sin(5 * time);
+            //start->comp.pos.y = window_height / 2 + 100 * sin(time);
             //end->comp.pos.x = window_width - 100 + 10 * sin(3 * time);
-            //end->comp.pos.y = window_height / 2 - 100 * sin(time);
+            end->comp.pos.y = window_height / 2 - 100 * sin(time);
         }
 
         //Drawing things
